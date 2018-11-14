@@ -58,8 +58,12 @@ asmDataHead* CreateAsmList(char **name)
 	  }
 
 	  // Caso tenha sido um espaço ou tab e a string word não esteja em branco
-	  if ((fileItem == 0x20 || fileItem == 0x09) && word[0] != '\0')
+	  if (fileItem == 0x20 || fileItem == 0x09)
 	  {
+      // Finalização da string 'word'
+      word[i] = '\0';
+
+      // Reseta o contador dos indexes de 'word'
 		  i = 0;
 
 		  // Caso seja section Data ou Bss, e há uma declaração de label, add na lista de data.
@@ -73,15 +77,18 @@ asmDataHead* CreateAsmList(char **name)
 		  // Concatenação no saveFile
 		  strcat(saveFile, word);
 
-		  if (wasLabel == 1)
-		  {
-			  strcat(saveFile, ": ");
-			  wasLabel = 0;
-		  }
-		  else
-		  {
-			  strcat(saveFile, " ");
-		  }
+      if(word[0] != '\0')
+      {
+        if (wasLabel == 1)
+        {
+          strcat(saveFile, ": ");
+          wasLabel = 0;
+        }
+        else
+        {
+          strcat(saveFile, " ");
+        }
+      }
 
 		  // Limpar por completo a string word
 		  ClearString(word, 100);
@@ -92,7 +99,7 @@ asmDataHead* CreateAsmList(char **name)
 	  {
 		  // Concatenação no saveFile se word não estiver vazio
 		  if (word[0] != '\0')
-			strcat(saveFile, word);
+			   strcat(saveFile, word);
 
 		  // Adiciona a linha do programa na lista asm
 		  AddAsmList(&asmContent, saveFile, contentHead);
