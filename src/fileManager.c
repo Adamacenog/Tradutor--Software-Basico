@@ -224,3 +224,48 @@ void WriteTranslatedProgram(char **name, translatedProgram *translatedProgramHea
 
 	fclose(asmFile);
 }
+
+// Copia todos itens do txt 'input-output--funcs.txt' para a lista 'TranslatedProgram'
+void CopyFromTxtToList(translatedProgram *translatedProgramHead)
+{
+  FILE *funcsFile;
+  char fileItem, program[204];
+  int i = 0;
+
+  // Abertura do arquivo '.txt'
+  funcsFile = fopen("input-output--funcs.txt","r");
+  if(funcsFile == NULL)
+  {
+    printf("ERRO: Arquivo de funções input/output não encontrado\n");
+    exit(1);
+  }
+
+  // Apaga todo conteudo da string program
+  ClearString(program, 204);
+
+  // Leitura de caracter em caracter do arquivo, botando os caracteres em maiúsculo
+  while ((fileItem = toupper((char) fgetc(funcsFile))) != EOF)
+  {
+    // Remoção do carriage return e do '\n'
+    if (fileItem != 0xD && fileItem != '\n')
+    {
+      program[i] = fileItem;
+      i++;
+    }
+    else
+    {
+      i = 0;
+    }
+
+    if(fileItem == '\n')
+    {
+      AddTranslatedProgram(&translatedProgramHead, program);
+      ClearString(program, 204);
+      i = 0;
+    }
+  }
+
+  // Caso o arquivo '.txt' não termine com '\n' (windows)
+  if (program[0] != '\0')
+    AddTranslatedProgram(&translatedProgramHead, program);
+}

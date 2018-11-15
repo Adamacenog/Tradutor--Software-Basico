@@ -37,7 +37,8 @@ void TranslateToIa32(asmList *asmContent, char **name)
     asmContent = asmContent->nextLine;
 	}
 
-	// Adição das funções assembly de input no 'asm' final (no fim do arquivo)
+	// Adição das funções assembly de input/output no 'asm' final (no fim do arquivo)
+  CopyFromTxtToList(translatedProgramHead);
 
 	WriteTranslatedProgram(name, translatedProgramHead);
 	DeleteTranslatedProgram(&translatedProgramHead);

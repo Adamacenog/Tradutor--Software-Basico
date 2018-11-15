@@ -22,3 +22,4 @@ void AddTranslatedProgram(translatedProgram **, char *);
 void DeleteAsmList(asmList **);
 void DeleteTranslatedProgram(translatedProgram **);
 void WriteTranslatedProgram(char **, translatedProgram *);
+void CopyFromTxtToList(translatedProgram *);
