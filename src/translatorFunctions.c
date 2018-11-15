@@ -33,6 +33,16 @@ void TranslateToIa32(asmDataHead *contentHead, char **name)
 	dataList *dataListHead = contentHead->dataListHead;
   translatedProgram *translatedProgramHead = NULL;
 
+  printf("\n");
+
+  while (dataListHead != NULL)
+  {
+    printf("Label: %s\n", dataListHead->Label);
+    dataListHead = dataListHead->nextItem;
+  }
+
+  printf("\n");
+
 	// Percorrimento de toda a lista 'asmContent' para tradu��o.
 	while (asmContent != NULL)
 	{

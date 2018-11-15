@@ -34,7 +34,7 @@ asmDataHead* CreateAsmList(char **name)
   dataList *dataListHead = NULL;
 
   // section: 0 - text, 1 - data/bss
-  int i = 0, section = 0, wasLabel = 0;
+  int i = 0, section = 0, wasExtern = 0;
   char fileItem, saveFile[204], word[100];
 
   // Inicialização da cabeça de data/lista asm
@@ -56,59 +56,51 @@ asmDataHead* CreateAsmList(char **name)
 		  word[i] = fileItem;
 		  i++;
 	  }
-
-	  // Caso tenha sido um espaço ou tab e a string word não esteja em branco
-	  if (fileItem == 0x20 || fileItem == 0x09)
-	  {
-      // Finalização da string 'word'
-      word[i] = '\0';
-
+    else
+    {
       // Reseta o contador dos indexes de 'word'
 		  i = 0;
+    }
+
+	  // Caso tenha sido um espaço ou tab e a string word não esteja em branco
+	  if ((fileItem == 0x20 || fileItem == 0x09 || fileItem == '\n') && word[0] != '\0')
+	  {
+      // Concatenação no saveFile
+		  strcat(saveFile, word);
+
+      // Verificação se a label é externa para adição na lista de declarações de label 'data/bss'
+      if (strcmp(word, "EXTERN") == 0)
+      {
+        wasExtern = 1;
+        CopyStringUntilSpace(saveFile, word, 100);
+      }
 
 		  // Caso seja section Data ou Bss, e há uma declaração de label, add na lista de data.
-		  if (section == 1 && isLabelDeclaration)
+		  if ((section == 1 && isLabelDeclaration(word) == 1) || wasExtern == 1)
 		  {
 			  RemoveChar(':', word, 100, 1);
 			  AddDataList(&dataListHead, word, contentHead);
-			  wasLabel = 1;
+        wasExtern = 0;
 		  }
 
-		  // Concatenação no saveFile
-		  strcat(saveFile, word);
+      // Caso seja fim de linha
+  	  if (fileItem == '\n')
+  	  {
+  		  // Adiciona a linha do programa na lista asm
+  		  AddAsmList(&asmContent, saveFile, contentHead);
 
-      if(word[0] != '\0')
+  		  // Checa se saveFile é alguma declaração de seção (text, data, bss)
+  		  isWhatSection(saveFile, &section);
+
+  		  // Limpar por completo a string saveFile e word
+  		  ClearString(saveFile, 204);
+  	  }
+      else
       {
-        if (wasLabel == 1)
-        {
-          strcat(saveFile, ": ");
-          wasLabel = 0;
-        }
-        else
-        {
-          strcat(saveFile, " ");
-        }
+        strcat(saveFile, " ");
       }
 
 		  // Limpar por completo a string word
-		  ClearString(word, 100);
-	  }
-
-	  // Caso seja fim de linha
-	  if (fileItem == '\n')
-	  {
-		  // Concatenação no saveFile se word não estiver vazio
-		  if (word[0] != '\0')
-			   strcat(saveFile, word);
-
-		  // Adiciona a linha do programa na lista asm
-		  AddAsmList(&asmContent, saveFile, contentHead);
-
-		  // Checa se saveFile é alguma declaração de seção (text, data, bss)
-		  isWhatSection(saveFile, &section);
-
-		  // Limpar por completo a string saveFile e word
-		  ClearString(saveFile, 204);
 		  ClearString(word, 100);
 	  }
   }

@@ -59,7 +59,7 @@ int StringContains(char *string, char item, int size)
 	return quantity;
 }
 
-// Verifica se a string contem um caracter na sua ultima posição preenchida (retorna 1 se tiver, 0 se não)
+// Verifica se a string contem um caracter na sua ultima posiï¿½ï¿½o preenchida (retorna 1 se tiver, 0 se nï¿½o)
 int StringContainsAtEnd(char *string, char item, int size)
 {
 	if (string[size - 1] == item)
@@ -115,8 +115,25 @@ void GetLabelFromSum(char *item, int size)
 	CopyString(newItem, item, 51);
 }
 
+// Copia o conteudo total de uma string para outra de mesmo tamannho
 void CopyString(char *source, char *dest, int size)
 {
 	for (int i = 0; i <= size; i++)
 		dest[i] = source[i];
+}
+
+// Copia o conteudo de uma string para outra atÃ© o primeiro espaÃ§o na string source (ou a string inteira caso nÃ£o tenha espaÃ§o)
+void CopyStringUntilSpace(char *source, char *dest, int size)
+{
+  // Limpa por completo primeiro a string de destino
+  ClearString(dest, size);
+
+  for (int i = 0; i <= size; i++)
+  {
+    if (source[i] == 0x20)
+      break;
+
+    dest[i] = source[i];
+  }
+
 }
