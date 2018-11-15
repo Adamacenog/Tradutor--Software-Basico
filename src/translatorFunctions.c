@@ -61,11 +61,19 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
 
     if (strcmp(word, "ADD") == 0)
     {
-
+      strcat(program, word);
+      strcat(program, " EAX, ");
+      AdjustAdressingModes(asmContent->Program);
+      strcat(program, asmContent->Program);
+      ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "SUB") == 0)
     {
-
+      strcat(program, word);
+      strcat(program, " EAX, ");
+      AdjustAdressingModes(asmContent->Program);
+      strcat(program, asmContent->Program);
+      ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "MULT") == 0)
     {
@@ -77,31 +85,63 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
     }
     else if (strcmp(word, "JMP") == 0)
     {
-
+      // OBS::: RECHECAR TODAS AS OPERAÇÕES DE JUMP
+      strcat(program, word);
+      strcat(program, " ");
+      strcat(program, asmContent->Program);
+      ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "JMPN") == 0)
     {
-
+      // OBS::: RECHECAR TODAS AS OPERAÇÕES DE JUMP
+      strcat(program, "JL");
+      strcat(program, " ");
+      strcat(program, asmContent->Program);
+      ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "JMPP") == 0)
     {
-
+      // OBS::: RECHECAR TODAS AS OPERAÇÕES DE JUMP
+      strcat(program, "JG");
+      strcat(program, " ");
+      strcat(program, asmContent->Program);
+      ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "JMPZ") == 0)
     {
-
+      // OBS::: RECHECAR TODAS AS OPERAÇÕES DE JUMP
+      strcat(program, "JE");
+      strcat(program, " ");
+      strcat(program, asmContent->Program);
+      ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "COPY") == 0)
     {
-
+      strcat(program, "MOV DWORD EBX, ");
+      MoveStringUntilSpace(asmContent->Program, word, 204);
+      RemoveChar(',', word, 204, 1);
+      AdjustAdressingModes(word);
+      strcat(program, word);
+      strcat(program, "\nMOV DWORD ");
+      AdjustAdressingModes(asmContent->Program);
+      strcat(program, asmContent->Program);
+      strcat(program, ", EBX");
+      ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "LOAD") == 0)
     {
-
+      strcat(program, "MOV DWORD EAX, ");
+      AdjustAdressingModes(asmContent->Program);
+      strcat(program, asmContent->Program);
+      ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "STORE") == 0)
     {
-
+      strcat(program, "MOV DWORD ");
+      AdjustAdressingModes(asmContent->Program);
+      strcat(program, asmContent->Program);
+      strcat(program, ", EAX");
+      ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "INPUT") == 0)
     {
@@ -155,10 +195,16 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
     {
       strcat(program, "RESD");
       MoveStringUntilSpace(asmContent->Program, word, 204);
+
+      // Caso o space não tenha nenhum argumento, bota-se 1.
       if (word[0] != '\0')
       {
         strcat(program, " ");
         strcat(program, word);
+      }
+      else
+      {
+        strcat(program, " 1");
       }
     }
     else if (strcmp(word, "CONST") == 0)
@@ -186,4 +232,64 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
   }
 
   AddTranslatedProgram(translatedProgramHead, program);
+}
+
+// Ajusta o modo de endereçamento de acordo com o operador (imediato, memoria (direto/indireto))
+void AdjustAdressingModes(char *operator)
+{
+  long number;
+  int i, j;
+  char *temp, newOperator[204], stringNumber[10];
+
+  number = strtol(operator, &temp, 10);
+
+  if (strcmp(temp, "") != 0 && strcmp(temp, "H") != 0)
+  {
+    // Limpa a nova string por completo
+    ClearString(newOperator, 204);
+    ClearString(stringNumber, 10);
+
+    // Inicia o ajuste do acesso a memoria
+    newOperator[0] = '[';
+    for (i = 0; i < 203; i++)
+    {
+      // Proximo item será um numero
+      if (operator[i] == '+')
+      {
+        newOperator[i + 1] = '+';
+        i++;
+
+        // Pega a string do numero
+        for (j = 0; j < 10 && (i + j) < 204; j++)
+        {
+          stringNumber[j] = operator[i + j];
+        }
+
+        // Pega o numero real e multiplica por 4 (pois é 32 bits e o deslocamento é *4)
+        number = (strtol(stringNumber, &temp, 10))*4;
+        ClearString(stringNumber, 10);
+
+        // Transforma novamente para string
+        sprintf(stringNumber, "%ld", number);
+
+        // Concatena o numero final no operador junto com o colchete
+        strcat(newOperator, stringNumber);
+        strcat(newOperator, "]");
+        break;
+      }
+
+      // Caso tenha apenas uma label e acabe a string
+      if (operator[i] == '\0')
+      {
+        newOperator[i + 1] = ']';
+        break;
+      }
+
+      // Adição dos caracteres
+      newOperator[i + 1] = operator[i];
+    }
+
+    // Copia a nova string no operador
+    CopyString(newOperator, operator, 204);
+  }
 }
