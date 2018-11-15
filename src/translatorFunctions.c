@@ -29,11 +29,12 @@ Andre Garrido Damaceno.- mat. 15/0117531
 void TranslateToIa32(asmList *asmContent, char **name)
 {
   translatedProgram *translatedProgramHead = NULL;
+  int wasText = 0;
 
 	// Percorrimento de toda a lista 'asmContent' para tradu��o.
 	while (asmContent != NULL)
 	{
-    TranslateMnemonicToIa32(&translatedProgramHead, asmContent);
+    TranslateMnemonicToIa32(&translatedProgramHead, asmContent, &wasText);
     asmContent = asmContent->nextLine;
 	}
 
@@ -45,7 +46,7 @@ void TranslateToIa32(asmList *asmContent, char **name)
 }
 
 // Traduz os mnemonicos de uma frase para equivalente em IA-32, assim como seus operandos/operações
-void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList *asmContent)
+void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList *asmContent, int *wasText)
 {
   char word[204];
   char program[204];
@@ -128,23 +129,50 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
     }
     else if (strcmp(word, "STOP") == 0)
     {
-
+      strcat(program, "MOV EAX, 1\nMOV EBX, 0\nINT 80h");
     }
     else if (strcmp(word, "SECTION") == 0)
     {
+      // Analisa qual é a seção
+      MoveStringUntilSpace(asmContent->Program, word, 204);
 
+      if (strcmp(word, "TEXT") == 0)
+      {
+        strcat(program, "SECTION .TEXT");
+        if((*wasText) == 0)
+          strcat(program, "\nGLOBAL _START\n_START:");
+      }
+      else if (strcmp(word, "DATA") == 0)
+      {
+        strcat(program, "SECTION .DATA");
+      }
+      else if (strcmp(word, "BSS") == 0)
+      {
+        strcat(program, "SECTION .BSS");
+      }
     }
     else if (strcmp(word, "SPACE") == 0)
     {
-
+      strcat(program, "RESD");
+      MoveStringUntilSpace(asmContent->Program, word, 204);
+      if (word[0] != '\0')
+      {
+        strcat(program, " ");
+        strcat(program, word);
+      }
     }
     else if (strcmp(word, "CONST") == 0)
     {
-
+      strcat(program, "DW ");
+      MoveStringUntilSpace(asmContent->Program, word, 204);
+      strcat(program, word);
     }
     else if (strcmp(word, "EQU") == 0)
     {
-
+      strcat(program, word);
+      strcat(program, " ");
+      MoveStringUntilSpace(asmContent->Program, word, 204);
+      strcat(program, word);
     }
     else if (strcmp(word, "IF") == 0)
     {
@@ -153,6 +181,7 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
     else
     {
       strcat(program, word);
+      strcat(program, " ");
     }
   }
 
