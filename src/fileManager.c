@@ -26,19 +26,12 @@ Andre Garrido Damaceno.- mat. 15/0117531
     #include "translatorFunctions.h"
 #endif
 
-asmDataHead* CreateAsmList(char **name)
+asmList* CreateAsmList(char **name)
 {
   FILE *asmFile;
-  asmDataHead *contentHead = NULL;
   asmList *asmContent = NULL;
-  dataList *dataListHead = NULL;
-
-  // section: 0 - text, 1 - data/bss
-  int i = 0, section = 0, wasExtern = 0;
+  int i = 0;
   char fileItem, saveFile[204], word[100];
-
-  // Inicialização da cabeça de data/lista asm
-  InitializeAsmDataHead(&contentHead);
 
   // Abertura do arquivo '.asm'
   asmFile = OpenAsmFile(name);
@@ -68,29 +61,11 @@ asmDataHead* CreateAsmList(char **name)
       // Concatenação no saveFile
 		  strcat(saveFile, word);
 
-      // Verificação se a label é externa para adição na lista de declarações de label 'data/bss'
-      if (strcmp(word, "EXTERN") == 0)
-      {
-        wasExtern = 1;
-        CopyStringUntilSpace(saveFile, word, 100);
-      }
-
-		  // Caso seja section Data ou Bss, e há uma declaração de label, add na lista de data.
-		  if ((section == 1 && isLabelDeclaration(word) == 1) || wasExtern == 1)
-		  {
-			  RemoveChar(':', word, 100, 1);
-			  AddDataList(&dataListHead, word, contentHead);
-        wasExtern = 0;
-		  }
-
       // Caso seja fim de linha
   	  if (fileItem == '\n')
   	  {
   		  // Adiciona a linha do programa na lista asm
-  		  AddAsmList(&asmContent, saveFile, contentHead);
-
-  		  // Checa se saveFile é alguma declaração de seção (text, data, bss)
-  		  isWhatSection(saveFile, &section);
+  		  AddAsmList(&asmContent, saveFile);
 
   		  // Limpar por completo a string saveFile e word
   		  ClearString(saveFile, 204);
@@ -113,12 +88,12 @@ asmDataHead* CreateAsmList(char **name)
 		  strcat(saveFile, word);
 
 	  // Adiciona a linha do programa na lista asm
-	  AddAsmList(&asmContent, saveFile, contentHead);
+	  AddAsmList(&asmContent, saveFile);
   }
 
   fclose(asmFile);
 
-  return contentHead;
+  return asmContent;
 }
 
 FILE * OpenAsmFile(char **name)
@@ -141,7 +116,7 @@ FILE * OpenAsmFile(char **name)
 }
 
 // Adiciona ao fim da lista AsmList (ou cria a lista caso seja NULL, e adiciona o inicio de AsmList em AsmDataHead)
-void AddAsmList(asmList **asmListHead, char *programLine, asmDataHead *contentHead)
+void AddAsmList(asmList **asmListHead, char *programLine)
 {
   asmList *contentCreator, *lastElem;
 
@@ -152,15 +127,6 @@ void AddAsmList(asmList **asmListHead, char *programLine, asmDataHead *contentHe
     *asmListHead = contentCreator;
     (*asmListHead)->nextLine = NULL;
     (*asmListHead)->previousLine = NULL;
-
-	if(contentHead != NULL)
-	{
-		contentHead->asmListHead = contentCreator;
-	}
-	else
-	{
-		printf("ERRO: Cabeça da lista nula\n");
-	}
   }
   else
   {
@@ -177,59 +143,6 @@ void AddAsmList(asmList **asmListHead, char *programLine, asmDataHead *contentHe
   strcpy(contentCreator->Program, programLine);
 }
 
-// Adiciona ao fim da lista DataList (ou cria a lista caso seja NULL, e adiciona o inicio de DataList em AsmDataHead)
-void AddDataList(dataList **dataListHead, char *label, asmDataHead *contentHead)
-{
-  dataList *contentCreator, *lastElem;
-
-  // Criação da lista de dados das labels de data/bss do programa '.asm'
-  contentCreator = (dataList *) malloc(sizeof(dataList));
-  if(*dataListHead == NULL)
-  {
-    *dataListHead = contentCreator;
-    (*dataListHead)->nextItem = NULL;
-    (*dataListHead)->previousItem = NULL;
-
-	if(contentHead != NULL)
-	{
-		contentHead->dataListHead = contentCreator;
-	}
-	else
-	{
-		printf("ERRO: Cabeça da lista nula\n");
-	}
-  }
-  else
-  {
-    lastElem = *dataListHead;
-
-    while(lastElem->nextItem != NULL)
-      lastElem = lastElem->nextItem;
-
-    contentCreator->previousItem = lastElem;
-    lastElem->nextItem = contentCreator;
-    contentCreator->nextItem = NULL;
-  }
-
-  strcpy(contentCreator->Label, label);
-}
-
-// Aloca espaço para a lista AsmDataHead
-void InitializeAsmDataHead(asmDataHead **contentHead)
-{
-	(*contentHead) = (asmDataHead *) malloc(sizeof(asmDataHead));
-	(*contentHead)->asmListHead = NULL;
-    (*contentHead)->dataListHead = NULL;
-}
-
-// Deleta as listas AsmList, DataList e a cabeça AsmDataHead
-void DeleteAsmData(asmDataHead **contentHead)
-{
-	DeleteAsmList(&(*contentHead)->asmListHead);
-	DeleteDataList(&(*contentHead)->dataListHead);
-	free(*contentHead);
-}
-
 // Deleta a lista AsmList
 void DeleteAsmList(asmList **asmListHead)
 {
@@ -239,19 +152,6 @@ void DeleteAsmList(asmList **asmListHead)
 	{
 		aux = *asmListHead;
 		*asmListHead = (*asmListHead)->nextLine;
-		free(aux);
-	}
-}
-
-// Deleta a lista DataList
-void DeleteDataList(dataList **dataListHead)
-{
-	dataList *aux;
-
-	while (*dataListHead != NULL)
-	{
-		aux = *dataListHead;
-		*dataListHead = (*dataListHead)->nextItem;
 		free(aux);
 	}
 }

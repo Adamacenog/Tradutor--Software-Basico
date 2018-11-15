@@ -30,12 +30,12 @@ int main(int argc, char *argv[])
 {
   if(argc == 2)
   {
-    asmDataHead *contentHead = NULL;
+    asmList *asmContent = NULL;
 
-    contentHead = CreateAsmList(argv);
-	TranslateToIa32(contentHead, argv);
+    asmContent = CreateAsmList(argv);
+	  TranslateToIa32(asmContent, argv);
 
-    DeleteAsmData(&contentHead);
+    DeleteAsmList(&asmContent);
   }
   else
   {

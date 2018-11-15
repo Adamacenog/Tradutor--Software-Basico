@@ -10,4 +10,3 @@ void RemoveChar(char, char *, int, int); // Remove apenas o primeiro e o ultimo 
 int StringCompareButEnd(char *, char *, int, int); // Compara todos os caracteres menos o ultimo, retorna 1 se for igual, 0 se for diferente
 void GetLabelFromSum(char *, int);
 void CopyString(char *, char *, int);
-void CopyStringUntilSpace(char *source, char *dest, int size);

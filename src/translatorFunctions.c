@@ -26,22 +26,10 @@ Andre Garrido Damaceno.- mat. 15/0117531
     #include "translatorFunctions.h"
 #endif
 
-void TranslateToIa32(asmDataHead *contentHead, char **name)
+void TranslateToIa32(asmList *asmContent, char **name)
 {
-	// Listas com o arquivo '.asm' e a lista de declarações de data/bss
-	asmList *asmContent = contentHead->asmListHead;
-	dataList *dataListHead = contentHead->dataListHead;
+	// Lista com o programa traduzido para IA-32
   translatedProgram *translatedProgramHead = NULL;
-
-  printf("\n");
-
-  while (dataListHead != NULL)
-  {
-    printf("Label: %s\n", dataListHead->Label);
-    dataListHead = dataListHead->nextItem;
-  }
-
-  printf("\n");
 
 	// Percorrimento de toda a lista 'asmContent' para tradu��o.
 	while (asmContent != NULL)
@@ -54,38 +42,4 @@ void TranslateToIa32(asmDataHead *contentHead, char **name)
 
 	WriteTranslatedProgram(name, translatedProgramHead);
 	DeleteTranslatedProgram(&translatedProgramHead);
-}
-
-// Retorna 1 se for uma declaração de label, 0 se não
-int isLabelDeclaration(char *Label)
-{
-	return StringContainsAtEnd(Label, ':', 51);
-}
-
-// Bota 0 no section caso seja seção texto, 1 se for seção bss ou data
-void isWhatSection(char *saveFile, int *section)
-{
-	if (strcmp(saveFile, "SECTION TEXT") == 0)
-	{
-		(*section) = 0;
-	}
-
-	if (strcmp(saveFile, "SECTION DATA") == 0 || strcmp(saveFile, "SECTION BSS") == 0)
-	{
-		(*section) = 1;
-	}
-}
-
-// Busca a label na lista dataList. Caso exista a label na lista retorna 1, caso contrário 0.
-int isInDataList(dataList *dataListHead, char *label)
-{
-	while (dataListHead != NULL)
-	{
-		if (strcmp(dataListHead->Label, label) == 0)
-			return 1;
-
-		dataListHead = dataListHead->nextItem;
-	}
-
-	return 0;
 }

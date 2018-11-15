@@ -121,19 +121,3 @@ void CopyString(char *source, char *dest, int size)
 	for (int i = 0; i <= size; i++)
 		dest[i] = source[i];
 }
-
-// Copia o conteudo de uma string para outra até o primeiro espaço na string source (ou a string inteira caso não tenha espaço)
-void CopyStringUntilSpace(char *source, char *dest, int size)
-{
-  // Limpa por completo primeiro a string de destino
-  ClearString(dest, size);
-
-  for (int i = 0; i <= size; i++)
-  {
-    if (source[i] == 0x20)
-      break;
-
-    dest[i] = source[i];
-  }
-
-}
