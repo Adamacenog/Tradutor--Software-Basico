@@ -28,13 +28,12 @@ Andre Garrido Damaceno.- mat. 15/0117531
 
 void TranslateToIa32(asmList *asmContent, char **name)
 {
-	// Lista com o programa traduzido para IA-32
   translatedProgram *translatedProgramHead = NULL;
 
 	// Percorrimento de toda a lista 'asmContent' para tradu��o.
 	while (asmContent != NULL)
 	{
-    printf("%s\n", asmContent->Program);
+    TranslateMnemonicToIa32(&translatedProgramHead, asmContent);
     asmContent = asmContent->nextLine;
 	}
 
@@ -42,4 +41,119 @@ void TranslateToIa32(asmList *asmContent, char **name)
 
 	WriteTranslatedProgram(name, translatedProgramHead);
 	DeleteTranslatedProgram(&translatedProgramHead);
+}
+
+// Traduz os mnemonicos de uma frase para equivalente em IA-32, assim como seus operandos/operações
+void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList *asmContent)
+{
+  char word[204];
+  char program[204];
+
+  // Limpa as strings
+  ClearString(word, 204);
+  ClearString(program, 204);
+
+  while (asmContent->Program[0] != '\0')
+  {
+    MoveStringUntilSpace(asmContent->Program, word, 204);
+
+    if (strcmp(word, "ADD") == 0)
+    {
+
+    }
+    else if (strcmp(word, "SUB") == 0)
+    {
+
+    }
+    else if (strcmp(word, "MULT") == 0)
+    {
+
+    }
+    else if (strcmp(word, "DIV") == 0)
+    {
+
+    }
+    else if (strcmp(word, "JMP") == 0)
+    {
+
+    }
+    else if (strcmp(word, "JMPN") == 0)
+    {
+
+    }
+    else if (strcmp(word, "JMPP") == 0)
+    {
+
+    }
+    else if (strcmp(word, "JMPZ") == 0)
+    {
+
+    }
+    else if (strcmp(word, "COPY") == 0)
+    {
+
+    }
+    else if (strcmp(word, "LOAD") == 0)
+    {
+
+    }
+    else if (strcmp(word, "STORE") == 0)
+    {
+
+    }
+    else if (strcmp(word, "INPUT") == 0)
+    {
+
+    }
+    else if (strcmp(word, "OUTPUT") == 0)
+    {
+
+    }
+    else if (strcmp(word, "C_INPUT") == 0)
+    {
+
+    }
+    else if (strcmp(word, "C_OUTPUT") == 0)
+    {
+
+    }
+    else if (strcmp(word, "S_INPUT") == 0)
+    {
+
+    }
+    else if (strcmp(word, "S_OUTPUT") == 0)
+    {
+
+    }
+    else if (strcmp(word, "STOP") == 0)
+    {
+
+    }
+    else if (strcmp(word, "SECTION") == 0)
+    {
+
+    }
+    else if (strcmp(word, "SPACE") == 0)
+    {
+
+    }
+    else if (strcmp(word, "CONST") == 0)
+    {
+
+    }
+    else if (strcmp(word, "EQU") == 0)
+    {
+
+    }
+    else if (strcmp(word, "IF") == 0)
+    {
+
+    }
+    else
+    {
+      strcat(program, word);
+    }
+  }
+
+  AddTranslatedProgram(translatedProgramHead, program);
 }

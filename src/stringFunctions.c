@@ -121,3 +121,31 @@ void CopyString(char *source, char *dest, int size)
 	for (int i = 0; i <= size; i++)
 		dest[i] = source[i];
 }
+
+// Move o conteudo da string source para a string dest até um espaço (o espaço também é removido). size(source) tem que ser igual a size(dest)
+void MoveStringUntilSpace(char *source, char *dest, int size)
+{
+  int i, j;
+
+  // Limpa a string dest
+  ClearString(dest, size);
+
+  if(source[0] != '\0')
+  {
+    for (i = 0; i <= size; i++)
+    {
+      if (source[i] == 0x20)
+        break;
+
+      dest[i] = source[i];
+    }
+    
+    i++;
+
+    for (j = 0; (j+i) <= size; j++)
+  		source[j] = source[j+i];
+
+    if (i >= size)
+      ClearString(source, size);
+  }
+}
