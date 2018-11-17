@@ -78,11 +78,11 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
     }
     else if (strcmp(word, "mult") == 0)
     {
-      strcat(program, "sub edx, edx\nimul dword ");
+      strcat(program, "imul dword ");
       AdjustAdressingModes(asmContent->Program);
       strcat(program, asmContent->Program);
       ClearString(asmContent->Program, 204);
-      strcat(program, "\ncmp edx, 0\nje mulnotoverflow");
+      strcat(program, "\njnc mulnotoverflow\njno mulnotoverflow");
       strcat(program, "\nmov edx, ovrflwlenth\nmov ecx, ovrflwmsg\n");
       strcat(program, "mov ebx, 1\nmov eax, 4\nint 80h\n");
       strcat(program, "mov eax, 1\nmov ebx, -1\nint 80h"); // Finaliza o programa com '-1 (erro)'
