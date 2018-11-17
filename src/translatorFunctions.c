@@ -86,7 +86,6 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
     }
     else if (strcmp(word, "JMP") == 0)
     {
-      // OBS::: RECHECAR TODAS AS OPERAÇÕES DE JUMP
       strcat(program, word);
       strcat(program, " ");
       strcat(program, asmContent->Program);
@@ -94,7 +93,6 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
     }
     else if (strcmp(word, "JMPN") == 0)
     {
-      // OBS::: RECHECAR TODAS AS OPERAÇÕES DE JUMP
       strcat(program, "JL");
       strcat(program, " ");
       strcat(program, asmContent->Program);
@@ -102,7 +100,6 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
     }
     else if (strcmp(word, "JMPP") == 0)
     {
-      // OBS::: RECHECAR TODAS AS OPERAÇÕES DE JUMP
       strcat(program, "JG");
       strcat(program, " ");
       strcat(program, asmContent->Program);
@@ -110,7 +107,6 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
     }
     else if (strcmp(word, "JMPZ") == 0)
     {
-      // OBS::: RECHECAR TODAS AS OPERAÇÕES DE JUMP
       strcat(program, "JE");
       strcat(program, " ");
       strcat(program, asmContent->Program);
@@ -146,27 +142,45 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
     }
     else if (strcmp(word, "INPUT") == 0)
     {
-
+      strcat(program, "PUSH EAX\nCALL INPUT\nMOV DWORD ");
+      strcat(program, asmContent->Program);
+      strcat(program, ", EAX\nPOP EAX");
+      ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "OUTPUT") == 0)
     {
-
+      strcat(program, "PUSH EAX\nPUSH DWORD ");
+      strcat(program, asmContent->Program);
+      strcat(program, "\nCALL OUTPUT\nADD ESP, 4\nPOP EAX");
+      ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "C_INPUT") == 0)
     {
-
+      strcat(program, "PUSH EAX\nCALL C_INPUT\nMOV DWORD ");
+      strcat(program, asmContent->Program);
+      strcat(program, ", EAX\nPOP EAX");
+      ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "C_OUTPUT") == 0)
     {
-
+      strcat(program, "PUSH EAX\nPUSH DWORD ");
+      strcat(program, asmContent->Program);
+      strcat(program, "\nCALL C_OUTPUT\nADD ESP, 4\nPOP EAX");
+      ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "S_INPUT") == 0)
     {
-
+      strcat(program, "PUSH EAX\nCALL S_INPUT\nMOV DWORD ");
+      strcat(program, asmContent->Program);
+      strcat(program, ", EAX\nPOP EAX");
+      ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "S_OUTPUT") == 0)
     {
-
+      strcat(program, "PUSH EAX\nPUSH DWORD ");
+      strcat(program, asmContent->Program);
+      strcat(program, "\nCALL S_OUTPUT\nADD ESP, 4\nPOP EAX");
+      ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "STOP") == 0)
     {
