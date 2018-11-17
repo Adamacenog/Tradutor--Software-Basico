@@ -63,7 +63,7 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
     if (strcmp(word, "ADD") == 0)
     {
       strcat(program, word);
-      strcat(program, " EAX, ");
+      strcat(program, " DWORD EAX, ");
       AdjustAdressingModes(asmContent->Program);
       strcat(program, asmContent->Program);
       ClearString(asmContent->Program, 204);
