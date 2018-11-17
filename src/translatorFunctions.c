@@ -60,155 +60,185 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
   {
     MoveStringUntilSpace(asmContent->Program, word, 204);
 
-    if (strcmp(word, "ADD") == 0)
+    if (strcmp(word, "add") == 0)
     {
       strcat(program, word);
-      strcat(program, " DWORD EAX, ");
+      strcat(program, " dword eax, ");
       AdjustAdressingModes(asmContent->Program);
       strcat(program, asmContent->Program);
       ClearString(asmContent->Program, 204);
     }
-    else if (strcmp(word, "SUB") == 0)
+    else if (strcmp(word, "sub") == 0)
     {
       strcat(program, word);
-      strcat(program, " EAX, ");
+      strcat(program, " dword eax, ");
       AdjustAdressingModes(asmContent->Program);
       strcat(program, asmContent->Program);
       ClearString(asmContent->Program, 204);
     }
-    else if (strcmp(word, "MULT") == 0)
+    else if (strcmp(word, "mult") == 0)
     {
-
+      strcat(program, "sub edx, edx\nimul dword ");
+      AdjustAdressingModes(asmContent->Program);
+      strcat(program, asmContent->Program);
+      ClearString(asmContent->Program, 204);
+      strcat(program, "\ncmp edx, 0\nje mulnotoverflow");
+      strcat(program, "\nmov edx, ovrflwlenth\nmov ecx, ovrflwmsg\n");
+      strcat(program, "mov ebx, 1\nmov eax, 4\nint 80h\n");
+      strcat(program, "mov eax, 1\nmov ebx, -1\nint 80h"); // Finaliza o programa com '-1 (erro)'
+      strcat(program, "\nmulnotoverflow:");
     }
-    else if (strcmp(word, "DIV") == 0)
+    else if (strcmp(word, "div") == 0)
     {
-
+      strcat(program, "cdq\n");
+      strcat(program, word);
+      strcat(program, " dword ");
+      AdjustAdressingModes(asmContent->Program);
+      strcat(program, asmContent->Program);
+      ClearString(asmContent->Program, 204);
     }
-    else if (strcmp(word, "JMP") == 0)
+    else if (strcmp(word, "jmp") == 0)
     {
       strcat(program, word);
       strcat(program, " ");
       strcat(program, asmContent->Program);
       ClearString(asmContent->Program, 204);
     }
-    else if (strcmp(word, "JMPN") == 0)
+    else if (strcmp(word, "jmpn") == 0)
     {
-      strcat(program, "JL");
+      strcat(program, "jl");
       strcat(program, " ");
       strcat(program, asmContent->Program);
       ClearString(asmContent->Program, 204);
     }
-    else if (strcmp(word, "JMPP") == 0)
+    else if (strcmp(word, "jmpp") == 0)
     {
-      strcat(program, "JG");
+      strcat(program, "jg");
       strcat(program, " ");
       strcat(program, asmContent->Program);
       ClearString(asmContent->Program, 204);
     }
-    else if (strcmp(word, "JMPZ") == 0)
+    else if (strcmp(word, "jmpz") == 0)
     {
-      strcat(program, "JE");
+      strcat(program, "je");
       strcat(program, " ");
       strcat(program, asmContent->Program);
       ClearString(asmContent->Program, 204);
     }
-    else if (strcmp(word, "COPY") == 0)
+    else if (strcmp(word, "copy") == 0)
     {
-      strcat(program, "MOV DWORD EBX, ");
+      strcat(program, "mov dword ebx, ");
       MoveStringUntilSpace(asmContent->Program, word, 204);
       RemoveChar(',', word, 204, 1);
       AdjustAdressingModes(word);
       strcat(program, word);
-      strcat(program, "\nMOV DWORD ");
+      strcat(program, "\nmov dword ");
+      RemoveChar(',', asmContent->Program, 204, 0);
       AdjustAdressingModes(asmContent->Program);
       strcat(program, asmContent->Program);
-      strcat(program, ", EBX");
+      strcat(program, ", ebx");
       ClearString(asmContent->Program, 204);
     }
-    else if (strcmp(word, "LOAD") == 0)
+    else if (strcmp(word, "load") == 0)
     {
-      strcat(program, "MOV DWORD EAX, ");
+      strcat(program, "mov dword eax, ");
       AdjustAdressingModes(asmContent->Program);
       strcat(program, asmContent->Program);
       ClearString(asmContent->Program, 204);
     }
-    else if (strcmp(word, "STORE") == 0)
+    else if (strcmp(word, "store") == 0)
     {
-      strcat(program, "MOV DWORD ");
+      strcat(program, "mov dword ");
       AdjustAdressingModes(asmContent->Program);
       strcat(program, asmContent->Program);
-      strcat(program, ", EAX");
+      strcat(program, ", eax");
       ClearString(asmContent->Program, 204);
     }
-    else if (strcmp(word, "INPUT") == 0)
+    else if (strcmp(word, "input") == 0)
     {
-      strcat(program, "PUSH EAX\nCALL INPUT\nMOV DWORD ");
+      strcat(program, "push eax\ncall LeerInteiro\nmov dword ");
+      AdjustAdressingModes(asmContent->Program);
       strcat(program, asmContent->Program);
-      strcat(program, ", EAX\nPOP EAX");
+      strcat(program, ", eax\npop eax");
       ClearString(asmContent->Program, 204);
     }
-    else if (strcmp(word, "OUTPUT") == 0)
+    else if (strcmp(word, "output") == 0)
     {
-      strcat(program, "PUSH EAX\nPUSH DWORD ");
+      strcat(program, "push eax\npush dword ");
+      AdjustAdressingModes(asmContent->Program);
       strcat(program, asmContent->Program);
-      strcat(program, "\nCALL OUTPUT\nADD ESP, 4\nPOP EAX");
+      strcat(program, "\ncall EscreverInteiro\nadd esp, 4\npop eax");
       ClearString(asmContent->Program, 204);
     }
-    else if (strcmp(word, "C_INPUT") == 0)
+    else if (strcmp(word, "c_input") == 0)
     {
-      strcat(program, "PUSH EAX\nCALL C_INPUT\nMOV DWORD ");
+      strcat(program, "push eax\ncall LeerChar\nmov dword ");
+      AdjustAdressingModes(asmContent->Program);
       strcat(program, asmContent->Program);
-      strcat(program, ", EAX\nPOP EAX");
+      strcat(program, ", eax\npop eax");
       ClearString(asmContent->Program, 204);
     }
-    else if (strcmp(word, "C_OUTPUT") == 0)
+    else if (strcmp(word, "c_output") == 0)
     {
-      strcat(program, "PUSH EAX\nPUSH DWORD ");
+      strcat(program, "push eax\npush dword ");
+      AdjustAdressingModes(asmContent->Program);
       strcat(program, asmContent->Program);
-      strcat(program, "\nCALL C_OUTPUT\nADD ESP, 4\nPOP EAX");
+      strcat(program, "\ncall EscreverChar\nadd esp, 4\npop eax");
       ClearString(asmContent->Program, 204);
     }
-    else if (strcmp(word, "S_INPUT") == 0)
+    else if (strcmp(word, "s_input") == 0)
     {
-      strcat(program, "PUSH EAX\nCALL S_INPUT\nMOV DWORD ");
+      strcat(program, "push eax\npush dword ");
+      MoveStringUntilSpace(asmContent->Program, word, 204);
+      RemoveChar(',', word, 204, 1);
+      strcat(program, word);
+      RemoveChar(',', asmContent->Program, 204, 0);
+      strcat(program, "\npush dword ");
+      AdjustAdressingModes(asmContent->Program);
       strcat(program, asmContent->Program);
-      strcat(program, ", EAX\nPOP EAX");
+      strcat(program, "\ncall LeerString\nadd dword esp, 8\npop eax");
       ClearString(asmContent->Program, 204);
     }
-    else if (strcmp(word, "S_OUTPUT") == 0)
+    else if (strcmp(word, "s_output") == 0)
     {
-      strcat(program, "PUSH EAX\nPUSH DWORD ");
+      strcat(program, "push eax\npush dword ");
+      MoveStringUntilSpace(asmContent->Program, word, 204);
+      RemoveChar(',', word, 204, 1);
+      strcat(program, word);
+      RemoveChar(',', asmContent->Program, 204, 0);
+      strcat(program, "\npush dword ");
+      AdjustAdressingModes(asmContent->Program);
       strcat(program, asmContent->Program);
-      strcat(program, "\nCALL S_OUTPUT\nADD ESP, 4\nPOP EAX");
+      strcat(program, "\ncall EscreverString\nadd esp, 8\npop eax");
       ClearString(asmContent->Program, 204);
     }
-    else if (strcmp(word, "STOP") == 0)
+    else if (strcmp(word, "stop") == 0)
     {
-      strcat(program, "MOV EAX, 1\nMOV EBX, 0\nINT 80h");
+      strcat(program, "mov eax, 1\nmov ebx, 0\nint 80h");
     }
-    else if (strcmp(word, "SECTION") == 0)
+    else if (strcmp(word, "section") == 0)
     {
       // Analisa qual é a seção
       MoveStringUntilSpace(asmContent->Program, word, 204);
 
-      if (strcmp(word, "TEXT") == 0)
+      if (strcmp(word, "text") == 0)
       {
-        strcat(program, "SECTION .TEXT");
+        strcat(program, "section .text");
         if((*wasText) == 0)
-          strcat(program, "\nGLOBAL _START\n_START:");
+          strcat(program, "\nglobal _start\n_start:");
       }
-      else if (strcmp(word, "DATA") == 0)
+      else if (strcmp(word, "data") == 0)
       {
-        strcat(program, "SECTION .DATA");
+        strcat(program, "section .data");
       }
-      else if (strcmp(word, "BSS") == 0)
+      else if (strcmp(word, "bss") == 0)
       {
-        strcat(program, "SECTION .BSS");
+        strcat(program, "section .bss");
       }
     }
-    else if (strcmp(word, "SPACE") == 0)
+    else if (strcmp(word, "space") == 0)
     {
-      strcat(program, "RESD");
+      strcat(program, "resd");
       MoveStringUntilSpace(asmContent->Program, word, 204);
 
       // Caso o space não tenha nenhum argumento, bota-se 1.
@@ -222,9 +252,9 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
         strcat(program, " 1");
       }
     }
-    else if (strcmp(word, "CONST") == 0)
+    else if (strcmp(word, "const") == 0)
     {
-      strcat(program, "DW ");
+      strcat(program, "dw ");
       MoveStringUntilSpace(asmContent->Program, word, 204);
       strcat(program, word);
     }
@@ -247,7 +277,7 @@ void AdjustAdressingModes(char *operator)
 
   number = strtol(operator, &temp, 10);
 
-  if (strcmp(temp, "") != 0 && strcmp(temp, "H") != 0)
+  if (strcmp(temp, "") != 0)
   {
     // Limpa a nova string por completo
     ClearString(newOperator, 204);

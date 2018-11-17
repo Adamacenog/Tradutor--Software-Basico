@@ -1,0 +1,3 @@
+section .data
+ovrflwmsg: dw  'Overflow detectado!',0xa	;Mensagem de overflow
+ovrflwlenth: equ $ - ovrflwmsg			;Tamanho da msg de overflow

@@ -43,7 +43,7 @@ asmList* CreateAsmList(char **name)
   ClearString(word, 100);
 
   // Leitura de caracter em caracter do arquivo, botando os caracteres em maiúsculo
-  while ((fileItem = toupper((char) fgetc(asmFile))) != EOF)
+  while ((fileItem = tolower((char) fgetc(asmFile))) != EOF)
   {
     // Remoção dos comentários
     if(fileItem == ';')
@@ -94,7 +94,7 @@ asmList* CreateAsmList(char **name)
       }
 
       // Caso seja encontrado um EQU
-      if(strcmp(word, "EQU") == 0)
+      if(strcmp(word, "equ") == 0)
       {
         // Remoção de espaços do label (que está no saveFile)
         RemoveChar(0x20, saveFile, 204, 0);
@@ -113,7 +113,7 @@ asmList* CreateAsmList(char **name)
       }
 
       // Caso seja encontrado um 'IF'
-      if(strcmp(word, "IF") == 0)
+      if(strcmp(word, "if") == 0)
       {
         // Remoção de espaços antes do IF
         RemoveChar(0x20, saveFile, 204, 0);
@@ -288,17 +288,17 @@ void DeleteTranslatedProgram(translatedProgram **translatedProgramHead)
 	}
 }
 
-// Coloca toda a lista de translatedProgram em um arquivo com o mesmo nome do '.asm' só que com '-IA32' no nome
+// Coloca toda a lista de translatedProgram em um arquivo com o mesmo nome do '.asm' só que com '.s' no formato
 void WriteTranslatedProgram(char **name, translatedProgram *translatedProgramHead)
 {
 	char asmFileName[100];
 	FILE * asmFile;
 
-	// Adicionando o '.asm' no nome do arquivo
+	// Adicionando o '.s' no nome do arquivo
 	strcpy(asmFileName, name[1]);
-	strcat(asmFileName, "-IA32.asm");
+	strcat(asmFileName, ".s");
 
-	// Abertura do arquivo '.asm'
+	// Abertura do arquivo '.s'
 	asmFile = fopen(asmFileName, "w");
 
 	if (asmFile == NULL)
@@ -335,7 +335,7 @@ void CopyFromTxtToList(translatedProgram *translatedProgramHead)
   ClearString(program, 204);
 
   // Leitura de caracter em caracter do arquivo, botando os caracteres em maiúsculo
-  while ((fileItem = toupper((char) fgetc(funcsFile))) != EOF)
+  while ((fileItem = tolower((char) fgetc(funcsFile))) != EOF)
   {
     // Remoção do carriage return e do '\n'
     if (fileItem != 0xD && fileItem != '\n')
