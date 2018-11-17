@@ -1,6 +1,7 @@
 /*
 Propriedade de:
 Andre Garrido Damaceno.- mat. 15/0117531
+Jônatas Senna - mat. 14/0090983
 */
 
 #ifndef _Primary_libraries
@@ -139,7 +140,7 @@ void MoveStringUntilSpace(char *source, char *dest, int size)
 
       dest[i] = source[i];
     }
-    
+
     i++;
 
     for (j = 0; (j+i) <= size; j++)

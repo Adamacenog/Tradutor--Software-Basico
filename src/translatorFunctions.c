@@ -1,6 +1,7 @@
 /*
 Propriedade de:
 Andre Garrido Damaceno.- mat. 15/0117531
+Jônatas Senna - mat. 14/0090983
 */
 
 #ifndef _Primary_libraries
@@ -212,17 +213,6 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
       strcat(program, "DW ");
       MoveStringUntilSpace(asmContent->Program, word, 204);
       strcat(program, word);
-    }
-    else if (strcmp(word, "EQU") == 0)
-    {
-      strcat(program, word);
-      strcat(program, " ");
-      MoveStringUntilSpace(asmContent->Program, word, 204);
-      strcat(program, word);
-    }
-    else if (strcmp(word, "IF") == 0)
-    {
-
     }
     else
     {
