@@ -359,6 +359,8 @@ void CopyFromTxtToList(translatedProgram *translatedProgramHead)
   // Caso o arquivo '.txt' não termine com '\n' (windows)
   if (program[0] != '\0')
     AddTranslatedProgram(&translatedProgramHead, program);
+
+  fclose(funcsFile);
 }
 
 // Seta o valor do fim da lista EquTable
