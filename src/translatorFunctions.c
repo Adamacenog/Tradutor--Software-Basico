@@ -254,7 +254,7 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
     }
     else if (strcmp(word, "const") == 0)
     {
-      strcat(program, "dw ");
+      strcat(program, "dd ");
       MoveStringUntilSpace(asmContent->Program, word, 204);
       strcat(program, word);
     }
