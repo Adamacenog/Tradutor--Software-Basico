@@ -275,7 +275,7 @@ void AdjustAdressingModes(char *operator)
   int i, j;
   char *temp, newOperator[204], stringNumber[10];
 
-  number = strtol(operator, &temp, 10);
+  number = strtol(operator, &temp, 0);
 
   if (strcmp(temp, "") != 0)
   {
