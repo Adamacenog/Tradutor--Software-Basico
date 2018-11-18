@@ -1,9 +1,11 @@
 
 section .data
+
 ovrflwmsg: dw  'Overflow detectado!',0xa	;Mensagem de overflow
 ovrflwlenth: equ $ - ovrflwmsg			      ;Tamanho da msg de overflow
 
 section .text
+
 EscreverInteiro:
 push dword ebp            ;Salva o valor de ebp na pilha
 mov ebp, esp			        ;Copia o valor da posição de esp para ebp
