@@ -90,7 +90,7 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
     }
     else if (strcmp(word, "div") == 0)
     {
-      strcat(program, "cdq\n");
+      strcat(program, "cdq\ni");
       strcat(program, word);
       strcat(program, " dword ");
       AdjustAdressingModes(asmContent->Program);
@@ -165,9 +165,8 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
     else if (strcmp(word, "output") == 0)
     {
       strcat(program, "push eax\npush dword ");
-      AdjustAdressingModes(asmContent->Program);
       strcat(program, asmContent->Program);
-      strcat(program, "\ncall EscreverInteiro\nadd esp, 4\npop eax");
+      strcat(program, "\ncall EscreverInteiro\npop eax");
       ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "c_input") == 0)
@@ -181,9 +180,8 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
     else if (strcmp(word, "c_output") == 0)
     {
       strcat(program, "push eax\npush dword ");
-      AdjustAdressingModes(asmContent->Program);
       strcat(program, asmContent->Program);
-      strcat(program, "\ncall EscreverChar\nadd esp, 4\npop eax");
+      strcat(program, "\ncall EscreverChar\npop eax");
       ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "s_input") == 0)

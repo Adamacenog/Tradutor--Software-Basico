@@ -335,7 +335,7 @@ void CopyFromTxtToList(translatedProgram *translatedProgramHead)
   ClearString(program, 204);
 
   // Leitura de caracter em caracter do arquivo, botando os caracteres em maiúsculo
-  while ((fileItem = tolower((char) fgetc(funcsFile))) != EOF)
+  while ((fileItem = (char) fgetc(funcsFile)) != EOF)
   {
     // Remoção do carriage return e do '\n'
     if (fileItem != 0xD && fileItem != '\n')
