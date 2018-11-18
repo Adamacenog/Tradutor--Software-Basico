@@ -10,6 +10,7 @@ mov ebp, esp			        ;Copia o valor da posição de esp para ebp
 mov eax, [ebp+8]          ;Coloca o conteúdo de ebp+8 em eax (endereço do conteudo a ser impresso)
 mov eax, [eax]            ;Coloca o numero a ser impresso em eax
 sub ebx, ebx              ;Zera o contador ebx
+push dword ebx            ;Bota ebx na pilha (quantidade de elementos que foram impressos)
 cdq                       ;Extende o sinal de eax em edx
 cmp edx, 0                ;Analisa se o número é negativo
 je GetNumPortionToPrint
@@ -19,11 +20,12 @@ push dword eax            ;Salva o numero transformado em positivo na pilha
 mov dword edx, 45         ;Coloca o '-' no edx
 push dword edx            ;Bota o '-' na pilha
 mov dword edx, ebp        ;Bota o endereço de ebp em edx
-sub dword edx, 8          ;Subtrai 8 de edx, fazendo com que em edx fique o endereço do item '45' (-)
+sub dword edx, 12         ;Subtrai 12 de edx, fazendo com que em edx fique o endereço do item '45' (-)
 push edx                  ;Bota o endereço de '-' na pilha
 call EscreverChar         ;Imprime o '-'
-mov eax, [ebp-4]          ;Restaura o valor de eax
-mov esp, ebp              ;Apaga todos os itens da pilha
+add dword esp, 4          ;Remove o edx da pilha
+pop dword eax             ;Restaura o valor de eax
+add dword [ebp - 4], 1    ;Adiciona 1 no contador de itens impressos
 sub ebx, ebx              ;Zera o contador ebx
 GetNumPortionToPrint:
 add ebx, 4                ;Adiciona em ebx para saber qntos itens irao para a pilha
@@ -34,18 +36,20 @@ push dword edx            ;Coloca o remainder na pilha
 cmp eax, 0                ;Verifica se o número já foi colocado na pilha por completo
 jg GetNumPortionToPrint   ;Faz o loop até que todos os digitos estejam na pilha individualmente
 printNumberByNumber:
-mov edx, ebp              ;Bota o valor de ebp em edx (endereço)
-sub edx, ebx              ;Subtrai do edx a quantidade ebx (endereço do proximo item a ser impresso)
+add dword [ebp - 4], 1    ;Adiciona 1 no contador de itens impressos
 sub dword ebx, 4          ;Subtrai 4 do contador (4 bytes)
+pop dword eax             ;Pega o primeiro item a ser impresso
 push dword ebx            ;Salva o contador na pilha
-mov eax, edx              ;Pega o endereço do item salvo na pilha
-add dword	[eax], 48 		  ;transforma em char numérico (soma 0x30) no conteudo a ser impresso
+add dword	eax, 48 		    ;transforma em char numérico (soma 0x30) no conteudo a ser impresso
 push dword eax            ;Bota o endereço do próximo item a ser impresso na pilha
+mov dword eax, esp        ;Bota em eax o endereço do conteudo a ser impresso
+push dword eax            ;Bota na pilha o endereço do conteudo a ser impresso
 call EscreverChar         ;Imprime uma parte do número
+add dword esp, 4          ;Apaga o conteudo impresso da pilha
 pop dword ebx             ;Restaura o contador de itens da pilha
 cmp ebx, 0                ;Verifica se já foram todos os itens
 jne printNumberByNumber   ;Caso ainda não tenha ido todos, volta para o loop
-mov esp, ebp              ;Apaga todos os itens da pilha
+pop dword eax             ;Bota em eax a quantidade de itens impressos
 pop dword ebp				      ;Restaura o valor de ebp
 ret 4				              ;desenpilha o retorno para o PC e o argumento (numero que foi impresso)
 
@@ -59,4 +63,6 @@ mov ebx, 1                ;Descritor do arquivo (stdout)
 mov eax, 4                ;Número de chamada do sistema (sys_write)
 int 0x80                  ;Chamada do kernel
 pop dword ebp				      ;Restaura o valor de ebp
+mov dword eax, 1          ;Retorna a quantidade de caracteres impressos em eax
 ret 4				              ;desenpilha o retorno para o PC e o argumento (numero que foi impresso)
+
