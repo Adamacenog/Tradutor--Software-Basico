@@ -164,9 +164,9 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
     }
     else if (strcmp(word, "output") == 0)
     {
-      strcat(program, "push eax\npush dword ");
+      strcat(program, "push dword ");
       strcat(program, asmContent->Program);
-      strcat(program, "\ncall EscreverInteiro\npop eax");
+      strcat(program, "\ncall EscreverInteiro");
       ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "c_input") == 0)
@@ -179,9 +179,9 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
     }
     else if (strcmp(word, "c_output") == 0)
     {
-      strcat(program, "push eax\npush dword ");
+      strcat(program, "push dword ");
       strcat(program, asmContent->Program);
-      strcat(program, "\ncall EscreverChar\npop eax");
+      strcat(program, "\ncall EscreverChar");
       ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "s_input") == 0)
