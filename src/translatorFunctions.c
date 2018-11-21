@@ -156,54 +156,44 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
     }
     else if (strcmp(word, "input") == 0)
     {
-      strcat(program, "push dword ");
+      strcat(program, "push dword eax\npush dword ");
       strcat(program, asmContent->Program);
-      strcat(program, "\ncall LeerInteiro");
+      strcat(program, "\ncall LeerInteiro\npop dword eax");
       ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "output") == 0)
     {
-      strcat(program, "push dword ");
+      strcat(program, "push dword eax\npush dword ");
       strcat(program, asmContent->Program);
-      strcat(program, "\ncall EscreverInteiro");
+      strcat(program, "\ncall EscreverInteiro\npop dword eax");
       ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "c_input") == 0)
     {
-      strcat(program, "push dword ");
+      strcat(program, "push dword eax\npush dword ");
       strcat(program, asmContent->Program);
-      strcat(program, "\ncall LeerChar");
+      strcat(program, "\ncall LeerChar\npop dword eax");
       ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "c_output") == 0)
     {
-      strcat(program, "push dword ");
+      strcat(program, "push dword eax\npush dword ");
       strcat(program, asmContent->Program);
-      strcat(program, "\ncall EscreverChar");
+      strcat(program, "\ncall EscreverChar\npop dword eax");
       ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "s_input") == 0)
     {
-      strcat(program, "push dword ");
-      MoveStringUntilSpace(asmContent->Program, word, 204);
-      RemoveChar(',', word, 204, 1);
-      strcat(program, word);
-      RemoveChar(',', asmContent->Program, 204, 0);
-      strcat(program, "\npush dword ");
+      strcat(program, "push dword eax\npush dword ");
       strcat(program, asmContent->Program);
-      strcat(program, "\ncall LeerString");
+      strcat(program, "\npush dword 100\ncall LeerString\npop dword eax");
       ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "s_output") == 0)
     {
-      strcat(program, "push dword ");
-      MoveStringUntilSpace(asmContent->Program, word, 204);
-      RemoveChar(',', word, 204, 1);
-      strcat(program, word);
-      RemoveChar(',', asmContent->Program, 204, 0);
-      strcat(program, "\npush dword ");
+      strcat(program, "push dword eax\npush dword ");
       strcat(program, asmContent->Program);
-      strcat(program, "\ncall EscreverString");
+      strcat(program, "\npush dword 100\ncall EscreverString\npop dword eax");
       ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "stop") == 0)
