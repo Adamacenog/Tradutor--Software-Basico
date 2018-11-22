@@ -185,15 +185,27 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
     else if (strcmp(word, "s_input") == 0)
     {
       strcat(program, "push dword eax\npush dword ");
-      strcat(program, asmContent->Program);
-      strcat(program, "\npush dword 100\ncall LeerString\npop dword eax");
+      MoveStringUntilSpace(asmContent->Program, word, 204);
+      RemoveChar(',', word, 204, 1);
+      strcat(program, word);
+      strcat(program, "\npush dword ");
+      MoveStringUntilSpace(asmContent->Program, word, 204);
+      RemoveChar(',', word, 204, 1);
+      strcat(program, word);
+      strcat(program,"\ncall LeerString\npop dword eax");
       ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "s_output") == 0)
     {
       strcat(program, "push dword eax\npush dword ");
-      strcat(program, asmContent->Program);
-      strcat(program, "\npush dword 100\ncall EscreverString\npop dword eax");
+      MoveStringUntilSpace(asmContent->Program, word, 204);
+      RemoveChar(',', word, 204, 1);
+      strcat(program, word);
+      strcat(program, "\npush dword ");
+      MoveStringUntilSpace(asmContent->Program, word, 204);
+      RemoveChar(',', word, 204, 1);
+      strcat(program, word);
+      strcat(program,"\ncall EscreverString\npop dword eax");
       ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "stop") == 0)
@@ -207,17 +219,17 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
 
       if (strcmp(word, "text") == 0)
       {
-        strcat(program, "section .text");
+        strcat(program, "section .text\n");
         if((*wasText) == 0)
-          strcat(program, "\nglobal _start\n_start:");
+          strcat(program, "\nglobal _start\n_start:\n");
       }
       else if (strcmp(word, "data") == 0)
       {
-        strcat(program, "section .data");
+        strcat(program, "\nsection .data\n");
       }
       else if (strcmp(word, "bss") == 0)
       {
-        strcat(program, "section .bss");
+        strcat(program, "\nsection .bss\n");
       }
     }
     else if (strcmp(word, "space") == 0)
