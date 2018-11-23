@@ -1,6 +1,6 @@
 
 section .text
-
+;Devo separar as funções e colocar global?
 leerInteiro:
   enter 16,0
   mov dword[ebp-8], 0x0
@@ -8,7 +8,7 @@ leerInteiro:
   mov dword[ebp-16], 0       ; contador
 loop1:
   mov [ebp-4], ebp
-  sub dword[ebp-4], 0x1
+  sub dword[ebp-4], 0x1     ;Isso aqui funciona?!
   mov ebx, 0                ;Descritor do arquivo (stdin)
   mov ecx, [ebp-4]
   mov edx, 0x1
@@ -48,6 +48,7 @@ retorno1:
   mov dword ebx, [ebp-8] ;resultado
   mov dword ebx, [ebp-16] ;contador
   leave
+  ret
 
 
 leerChar:
@@ -63,6 +64,7 @@ leerChar:
   mov dword eax, [ebp-1] ;resultado
   mov dword [eax], 0x1; count
   leave
+  ret
 
 leerString:
   enter 8,0
@@ -85,3 +87,4 @@ loop2:
 retorno2:
   mov eax, dword[ebp-4]
   leave
+  ret
