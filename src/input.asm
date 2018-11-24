@@ -80,11 +80,29 @@ loop2:
   pop ecx ; recupera tamanho maximo
   cmp dword [ebx], 0x0A ;se for enter pula
   je retorno2
-  add dword [ebx], 0x1 ;aumenta o endereço em 1B
+  add dword ebx, 0x1 ;aumenta o endereço em 1B
   add dword[ebp-4], 0x1 ; contador ++
   cmp dword [ebp-4], [ecx] ;limite máximo estabelecido pelo usuário
   jb loop2
 retorno2:
   mov eax, dword[ebp-4] ; move a quantidade lida para eax
+  leave
+  ret
+
+
+escreverString:
+  enter 0,0
+  mov dword ebx, [ebp+12] ;copia o endereço para ebx
+  mov dword ecx, [ebp+8] ;copia o tamanho máximo
+loop3:
+  push ecx ;salva o contador
+  push ebx ;salva o endereço
+  push ebx ;endereço que está o char
+  call EscreverCharSemEnter
+  pop ebx ;recupera o endereço
+  pop ecx ;recupera o contador
+  add ebx, 0x1 ; aumenta em 1B
+  loop loop3 ;se não for 0 pula
+  mov eax, [ebp+8] ;quantidade escrita
   leave
   ret

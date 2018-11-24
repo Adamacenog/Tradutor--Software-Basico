@@ -76,6 +76,19 @@ pop dword ebp			  ;Restaura o valor de ebp
 mov dword eax, 2          ;Retorna a quantidade de caracteres impressos em eax (1 caracter + 0xA)
 ret 4				      ;desenpilha o retorno para o PC e o argumento (numero que foi impresso)
 
+EscreverCharSemEnter:
+push dword ebp            ;Salva o valor de ebp na pilha
+mov ebp, esp			  ;Copia o valor da posição de esp para ebp
+mov eax, [ebp+8]          ;Coloca o conteúdo de ebp+8 em eax (endereço do conteudo a ser impresso)
+mov edx, 1                ;Quantos caracteres serão impressos
+mov dword ecx, eax        ;O que será impresso (eax contem o endereço do conteúdo)
+mov ebx, 1                ;Descritor do arquivo (stdout)
+mov eax, 4                ;Número de chamada do sistema (sys_write)
+int 0x80                  ;Chamada do kernel
+pop dword ebp			  ;Restaura o valor de ebp
+mov dword eax, 2          ;Retorna a quantidade de caracteres impressos em eax (1 caracter + 0xA)
+ret 4				      ;desenpilha o retorno para o PC e o argumento (numero que foi impresso)
+
 EscreveEnter:
 push dword ebp            ;Salva o valor de ebp na pilha
 mov ebp, esp			  ;Copia o valor da posição de esp para ebp
@@ -90,6 +103,24 @@ int 0x80                  ;Chamada do kernel
 add dword esp, 4		  ;Desenpilha o '0xA'
 pop dword ebp			  ;Restaura o valor de ebp
 ret
+
+escreverString:
+  enter 0,0
+  mov dword ebx, [ebp+12] ;copia o endereço para ebx
+  mov dword ecx, [ebp+8] ;copia o tamanho máximo
+loop3:
+  push ecx ;salva o contador
+  push ebx ;salva o endereço
+  push ebx ;endereço que está o char
+  call EscreverCharSemEnter
+  pop ebx ;recupera o endereço
+  pop ecx ;recupera o contador
+  add ebx, 0x1 ; aumenta em 1B
+  loop loop3 ;se não for 0 pula
+  mov eax, [ebp+8] ;quantidade escrita
+  call EscreveEnter		  ;Escreve o enter no final da impressão
+  leave
+  ret
 
 LeerChar:
 push dword ebp      ;Salva o valor de ebp na pilha
