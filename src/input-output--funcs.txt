@@ -104,10 +104,11 @@ add dword esp, 4		  ;Desenpilha o '0xA'
 pop dword ebp			  ;Restaura o valor de ebp
 ret
 
-escreverString:
+EscreverString:
   enter 0,0
   mov dword ebx, [ebp+12] ;copia o endereço para ebx
   mov dword ecx, [ebp+8] ;copia o tamanho máximo
+  push dword 0	;Bota 0 no contador de caracteres impressos
 loop3:
   push ecx ;salva o contador
   push ebx ;salva o endereço
@@ -115,12 +116,17 @@ loop3:
   call EscreverCharSemEnter
   pop ebx ;recupera o endereço
   pop ecx ;recupera o contador
+  add dword [esp], 1	;Adiciona 1 no contador de caracteres impressos
+  cmp byte [ebx], 0xA
+  je  FimDaString
   add ebx, 0x1 ; aumenta em 1B
   loop loop3 ;se não for 0 pula
-  mov eax, [ebp+8] ;quantidade escrita
+  add dword [esp], 1	;Adiciona 1 no contador de caracteres impressos
   call EscreveEnter		  ;Escreve o enter no final da impressão
+FimDaString:
+  mov eax, [esp] ;quantidade escrita
   leave
-  ret
+  ret 8
 
 LeerChar:
 push dword ebp      ;Salva o valor de ebp na pilha
@@ -202,13 +208,13 @@ loop2:
   call LeerChar
   pop ebx ;recupera oendereço
   pop ecx ; recupera tamanho maximo
+  add dword[ebp-4], 0x1 ; contador ++
   cmp dword [ebx], 0x0A ;se for enter pula
   je retorno2
   add dword ebx, 0x1 ;aumenta o endereço em 1B
-  add dword[ebp-4], 0x1 ; contador ++
   cmp dword [ebp-4], ecx ;limite máximo estabelecido pelo usuário
   jb loop2
 retorno2:
   mov eax, dword[ebp-4] ; move a quantidade lida para eax
   leave
-  ret 4 ;elimina o endereço que foi gravado da pilha
+  ret 8 ;elimina o endereço que foi gravado da pilha
