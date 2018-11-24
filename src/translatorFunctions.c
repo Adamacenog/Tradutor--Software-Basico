@@ -172,7 +172,9 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
     {
       strcat(program, "push dword eax\npush dword ");
       strcat(program, asmContent->Program);
-      strcat(program, "\ncall LeerChar\npop dword eax");
+      strcat(program, "\ncall LeerChar\nmov dword ebx, esp\nsub dword ebx, 4\n");
+      // Para ler o enter e não dar problema da prox instrução possivelmente pegar ele (como se fosse um getchar())
+      strcat(program, "push dword 0\npush ebx\ncall LeerChar\nadd dword esp, 4\npop dword eax");
       ClearString(asmContent->Program, 204);
     }
     else if (strcmp(word, "c_output") == 0)
