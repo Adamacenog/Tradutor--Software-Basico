@@ -191,6 +191,7 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
       strcat(program, "\npush dword ");
       MoveStringUntilSpace(asmContent->Program, word, 204);
       RemoveChar(',', word, 204, 1);
+      AdjustAdressingModes(word);
       strcat(program, word);
       strcat(program,"\ncall LeerString\npop dword eax");
       ClearString(asmContent->Program, 204);
@@ -204,6 +205,7 @@ void TranslateMnemonicToIa32(translatedProgram **translatedProgramHead, asmList 
       strcat(program, "\npush dword ");
       MoveStringUntilSpace(asmContent->Program, word, 204);
       RemoveChar(',', word, 204, 1);
+      AdjustAdressingModes(word);
       strcat(program, word);
       strcat(program,"\ncall EscreverString\npop dword eax");
       ClearString(asmContent->Program, 204);
