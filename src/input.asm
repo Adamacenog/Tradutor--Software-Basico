@@ -67,24 +67,24 @@ leerChar:
   ret
 
 leerString:
-  enter 8,0
-  mov dword [ebp-4], 0
-  push dword [ebp+8]
+  enter 4,0
+  mov dword [ebp-4], 0 ; zera o contador
+  mov dword ebx, [ebp+12] ;copia o endereço para ebx
+  mov dword ecx, [ebp+8] ;copia o tamanho máximo
 loop2:
-  mov dword [ebp-8], ebp
-  sub dword [ebp-8], 0x0000000C
-  push dword [ebp-8] ;endereço de retorno do char
+  push ecx ;salva o tamanho máximo
+  push ebx ;salva o endereço
+  push ebx ;endereço de retorno do char
   call leerChar
-  pop eax ;só pra jogar fora
-  cmp dword [ebp-8], 0x0A ;se for enter pula
+  pop ebx ;recupera oendereço
+  pop ecx ; recupera tamanho maximo
+  cmp dword [ebx], 0x0A ;se for enter pula
   je retorno2
-  pop eax
-  mov dword eax, [ebp-8]
-  add dword [eax], 0x1 ;aumenta o endereço em 1B
+  add dword [ebx], 0x1 ;aumenta o endereço em 1B
   add dword[ebp-4], 0x1 ; contador ++
-  cmp dword [ebp-4], 0x64 ;limite máximo de 100 caracteres
-  jbe loop2
+  cmp dword [ebp-4], [ecx] ;limite máximo estabelecido pelo usuário
+  jb loop2
 retorno2:
-  mov eax, dword[ebp-4]
+  mov eax, dword[ebp-4] ; move a quantidade lida para eax
   leave
   ret

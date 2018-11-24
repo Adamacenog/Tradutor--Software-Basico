@@ -158,3 +158,26 @@ mov dword eax, [ebp-4]    ;Bota em eax a quantidade de caracteres lidos
 mov dword esp, ebp    ;Apaga todos os itens da pilha
 pop dword ebp       ;Restaura o valor de ebp
 ret 4
+
+leerString:
+  enter 4,0
+  mov dword [ebp-4], 0 ; zera o contador
+  mov dword ebx, [ebp+12] ;copia o endereço para ebx
+  mov dword ecx, [ebp+8] ;copia o tamanho máximo
+loop2:
+  push ecx ;salva o tamanho máximo
+  push ebx ;salva o endereço
+  push ebx ;endereço de retorno do char
+  call leerChar
+  pop ebx ;recupera oendereço
+  pop ecx ; recupera tamanho maximo
+  cmp dword [ebx], 0x0A ;se for enter pula
+  je retorno2
+  add dword [ebx], 0x1 ;aumenta o endereço em 1B
+  add dword[ebp-4], 0x1 ; contador ++
+  cmp dword [ebp-4], [ecx] ;limite máximo estabelecido pelo usuário
+  jb loop2
+retorno2:
+  mov eax, dword[ebp-4] ; move a quantidade lida para eax
+  leave
+  ret 4 ;elimina o endereço que foi gravado da pilha
